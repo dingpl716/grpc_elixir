@@ -1,21 +1,19 @@
 # GrpcElixir
 
-**TODO: Add description**
+A sample elixir grpc server.
 
-## Installation
+## Generate the pb.ex files
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `grpc_elixir` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:grpc_elixir, "~> 0.1.0"}
-  ]
-end
+```
+protoc -I priv/proto --elixir_out=plugins=grpc:./lib/proto/ priv/proto/account.proto
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/grpc_elixir](https://hexdocs.pm/grpc_elixir).
 
+## Start and call the server as follow:
+
+```elixir
+GRPC.Server.start(RpcElixir.AccountService.Server, 50051)
+{:ok, channel} = GRPC.Stub.connect("localhost:50051")
+request = GrpcElixir.GetBalanceRequest.new(%{address: "0x1111", block_heights: [1, 2, 3, 4]})
+{:ok, reply} = channel |> GrpcElixir.AccountService.Stub.get_balance(request)
+```

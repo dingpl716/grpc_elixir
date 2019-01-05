@@ -1,0 +1,26 @@
+syntax = "proto3";
+package grpc_elixir;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+message GetBalanceRequest {
+  string address = 1;
+  google.protobuf.Timestamp block_time = 2;
+  repeated uint32 block_heights = 3 [packed=true];
+}
+
+message GetBalanceResponse {
+  string address = 1;
+
+  message BalanceValue {
+    uint32 block_height = 1;
+    uint64 balance = 2;
+  }
+
+  repeated BalanceValue balances = 2;
+}
+
+service AccountService {
+  rpc GetBalance (GetBalanceRequest) returns (GetBalanceResponse);
+}
